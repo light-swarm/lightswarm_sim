@@ -3,9 +3,9 @@ import random
 import numpy as np
 
 SEP_RATE = 0.05
-ALIGN_RATE = 0.2
+ALIGN_RATE = 0.1
 SHEEP_RATE = 0.02
-SPEED = 1.2
+SPEED = 1.0  # x the refresh rate for speed in cms/sec
 
 def _normalized(v):
 	norm = np.linalg.norm(v)

@@ -3,6 +3,8 @@ import copy # for deep copying boids
 import random
 
 DISTANCE_BASED_NEIGHBORHOOD = True
+K_NEAREST = 3
+DISTANCE_SQUARED = 400
 
 class Flock(object):
 
@@ -29,10 +31,10 @@ class Flock(object):
 		distanced_boids = [((b.x - t.x)**2 + (b.y - t.y)**2, b) for b in boids if b != t]
 
 		if DISTANCE_BASED_NEIGHBORHOOD:
-			boids = [b for (distance, b) in distanced_boids if distance < 900]
+			boids = [b for (distance, b) in distanced_boids if distance < DISTANCE_SQUARED]
 		else:
 			distanced_boids.sort()
-			boids = [b for (distance, b) in distanced_boids[:5]]
+			boids = [b for (distance, b) in distanced_boids[:K_NEAREST]]
 
 		return boids
 
