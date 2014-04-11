@@ -4,7 +4,7 @@ import random
 
 DISTANCE_BASED_NEIGHBORHOOD = True
 K_NEAREST = 3
-DISTANCE_SQUARED = 400
+DISTANCE_SQUARED = 600
 
 class Flock(object):
 

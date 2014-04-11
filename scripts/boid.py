@@ -2,9 +2,9 @@ import math
 import random
 import numpy as np
 
-SEP_RATE = 0.05
-ALIGN_RATE = 0.1
-SHEEP_RATE = 0.02
+SEP_RATE = 0.06
+ALIGN_RATE = 0.07
+SHEEP_RATE = 0.03
 SPEED = 1.0  # x the refresh rate for speed in cms/sec
 
 def _normalized(v):
@@ -15,7 +15,8 @@ def _repulsion_factor(distance):
 	# not a great function. net repulsion goes
 	# down as the distance gets closer
 	if distance < 10:
-		return -0.3
+		repulse = -1 * (10 - distance) * 0.1
+		return repulse
 	return 0
 
 class Boid(object):
@@ -61,7 +62,7 @@ class Boid(object):
 		### BOID RULE3: don't get too close to other boids
 		neighbors_vectors = [neigh_pos - pos for neigh_pos in neighbors_pos]
 		neighbors_distance = [np.linalg.norm(v) for v in neighbors_vectors]
-		neighbors_repulsion = [ v*_repulsion_factor(d) for (v,d) in zip(neighbors_vectors, neighbors_distance)]
+		neighbors_repulsion = [ _normalized(v)*_repulsion_factor(d) for (v,d) in zip(neighbors_vectors, neighbors_distance)]
 		neighbors_repulsion_total = np.sum(neighbors_repulsion, axis=0)
 
 		sepration_vel = _normalized(neighbors_repulsion_total)
