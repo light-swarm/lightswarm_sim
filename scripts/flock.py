@@ -37,14 +37,14 @@ class Flock(object):
 			distanced_boids.sort()
 			boids = [b for (distance, b) in distanced_boids[:K_NEAREST]]
 
-		return boids
+		return boids[:5]
 
 	def update(self):
 		obstacles = np.asarray([[0,0], [-100, -100], [100,-100], [-100, 100], [100,100]])
 		cloned_boids = copy.deepcopy(self.boids)
 
 		for boid in self.boids:
-			obstacles[0][0] += 2 % 100
+			#obstacles[0][0] += 2 % 100
 			neighbor_boids = self.boids_in_neighborhood(cloned_boids, boid)
 			boid.update(neighbor_boids, obstacles)
 

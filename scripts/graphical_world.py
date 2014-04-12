@@ -27,11 +27,12 @@ class GraphicalWorld(World):
 
 	def render_boid(self, boid):
 		x,y = self.world_to_pixel(*boid.get_xy())
-		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 3)
 		for n in boid.last_neighbors:
 			(nx, ny) = self.world_to_pixel(*n.get_xy())
-			#pygame.draw.line(self.screen, (80, 80, 80), (x,y), (nx, ny))
-		boid.last_neighbors = None
+			pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))
+		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 3)
+
+		boid.last_neighbors = None  ### awful hack
 
 	def update(self):
 		super(GraphicalWorld, self).update()
@@ -43,9 +44,11 @@ class GraphicalWorld(World):
 	def run(self):
 		for i in range(2000):
 			self.update()
-			sleep(0.03)
+			#sleep(0.03)
 
 if __name__ == '__main__':
+
+
 	square_perimeter = Polygon([[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]])
 	world = GraphicalWorld(square_perimeter, 400, 400)
 	world.run()
