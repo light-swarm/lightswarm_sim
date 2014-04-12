@@ -56,6 +56,16 @@ class RosBoidWorld(GraphicalWorld):
             ros_boid.color = [255, 255, 255]
             boids.append(ros_boid)
         world.boids = boids
+
+        for obstacle in self.dynamic_obstacles + self.static_obstacles:
+            x, y = obstacle.get_center_xy()
+            obstacle_boid = Boid()
+            obstacle_boid.location.x = x
+            obstacle_boid.location.y = y
+            obstacle_boid.theta = 0
+            obstacle_boid.color = [255, 0, 0]
+            world.boids.append(obstacle_boid)
+
         return world
 
     def run(self):

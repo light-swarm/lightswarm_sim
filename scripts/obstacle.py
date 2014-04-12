@@ -13,6 +13,9 @@ class Obstacle(object):
 		self.buffer_size = buffer_size
 		self.dilated_polygon = self.polygon.buffer(buffer_size)
 
+	def get_center_xy(self):
+		return self.polygon.centroid.x, self.polygon.centroid.y
+		
 	def get_coordinates(self):
 		return self.polygon.exterior.coords
 
