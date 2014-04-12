@@ -1,10 +1,11 @@
 from boid import Boid
 import copy # for deep copying boids
 import random
+import numpy as np
 
 DISTANCE_BASED_NEIGHBORHOOD = True
 K_NEAREST = 3
-DISTANCE_SQUARED = 600
+DISTANCE = 30
 
 class Flock(object):
 
@@ -18,7 +19,7 @@ class Flock(object):
 		self.boids = []
 		for i in range(self.num_boids):
 			x,y = self.get_random_boid_params()
-			self.boids.append(Boid(x,y))
+			self.boids.append(Boid(x,y, self.perimeter))
 
 	def get_random_boid_params(self):
 		(minx, miny, maxx, maxy) = self.perimeter.bounds
@@ -28,10 +29,10 @@ class Flock(object):
 
 	def boids_in_neighborhood(self, boids, target_boid):
 		t = target_boid
-		distanced_boids = [((b.x - t.x)**2 + (b.y - t.y)**2, b) for b in boids if b != t]
+		distanced_boids = [(np.linalg.norm(b.pos - t.pos),  b) for b in boids if b != t]
 
 		if DISTANCE_BASED_NEIGHBORHOOD:
-			boids = [b for (distance, b) in distanced_boids if distance < DISTANCE_SQUARED]
+			boids = [b for (distance, b) in distanced_boids if distance < DISTANCE]
 		else:
 			distanced_boids.sort()
 			boids = [b for (distance, b) in distanced_boids[:K_NEAREST]]
@@ -39,27 +40,13 @@ class Flock(object):
 		return boids
 
 	def update(self):
-		self.keep_boids_in_world()
-
+		obstacles = np.asarray([[0,0], [-100, -100], [100,-100], [-100, 100], [100,100]])
 		cloned_boids = copy.deepcopy(self.boids)
+
 		for boid in self.boids:
+			obstacles[0][0] += 2 % 100
 			neighbor_boids = self.boids_in_neighborhood(cloned_boids, boid)
-			boid.update(neighbor_boids)
-
-
-
-	def keep_boids_in_world(self):
-		# teleport boids for the time being. wrap around
-		(minx, miny, maxx, maxy) = self.perimeter.bounds
-		for boid in self.boids:
-			if boid.x < minx:
-				boid.x = maxx
-			if boid.x > maxx:
-				boid.x = minx
-			if boid.y < miny:
-				boid.y = maxy
-			if boid.y > maxy:
-				boid.y = miny
+			boid.update(neighbor_boids, obstacles)
 
 
 

@@ -43,9 +43,10 @@ class RosBoidWorld(GraphicalWorld):
         boids = []
         for boid in self.flock.boids:
             ros_boid = Boid()
-            ros_boid.location.x = boid.x
-            ros_boid.location.y = boid.y
-            ros_boid.theta = 180 * math.atan2(boid.vel_y, boid.vel_x) / math.pi
+            x, y = boid.get_xy()
+            ros_boid.location.x = x
+            ros_boid.location.y = y
+            ros_boid.theta = boid.get_theta()
             ros_boid.color = [255, 255, 255]
             boids.append(ros_boid)
         world.boids = boids
