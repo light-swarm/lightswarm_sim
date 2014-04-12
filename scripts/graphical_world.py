@@ -24,12 +24,25 @@ class GraphicalWorld(World):
 	def render_world(self):
 		for boid in self.flock.boids:
 			self.render_boid(boid)
+		for obstacle in self.dynamic_obstacles:
+			self.render_obstacle(obstacle, (255, 0, 0))
+		for obstacle in self.static_obstacles:
+			self.render_obstacle(obstacle, (255, 120, 120))
+
+
+	def render_obstacle(self, obstacle, color):
+		boundary = [self.world_to_pixel(*c) for c in obstacle.get_coordinates()]
+		dilation_boundary = [self.world_to_pixel(*c) for c in obstacle.get_dilation_coordinates()]
+		pygame.draw.polygon(self.screen, color, boundary, 3)
+		pygame.draw.polygon(self.screen, color, dilation_boundary, 1)
+
+
 
 	def render_boid(self, boid):
 		x,y = self.world_to_pixel(*boid.get_xy())
 		for n in boid.last_neighbors:
 			(nx, ny) = self.world_to_pixel(*n.get_xy())
-			pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))
+			#pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))
 		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 3)
 
 		boid.last_neighbors = None  ### awful hack
@@ -44,6 +57,7 @@ class GraphicalWorld(World):
 	def run(self):
 		for i in range(2000):
 			self.update()
+			self.set_dynamic_obstacles([[[0,0], [10,0], [10,10]]])
 			#sleep(0.03)
 
 if __name__ == '__main__':

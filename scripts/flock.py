@@ -39,12 +39,10 @@ class Flock(object):
 
 		return boids[:5]
 
-	def update(self):
-		obstacles = np.asarray([[0,0], [-100, -100], [100,-100], [-100, 100], [100,100]])
+	def update(self, obstacles):
 		cloned_boids = copy.deepcopy(self.boids)
 
 		for boid in self.boids:
-			#obstacles[0][0] += 2 % 100
 			neighbor_boids = self.boids_in_neighborhood(cloned_boids, boid)
 			boid.update(neighbor_boids, obstacles)
 

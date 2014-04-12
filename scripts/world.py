@@ -1,6 +1,7 @@
 from flock import Flock
 from shapely.geometry import Polygon
-
+import numpy as np
+from obstacle import Obstacle, obstacle_from_point
 
 class World(object):
 	""" 
@@ -14,11 +15,18 @@ class World(object):
 		self.minx, self.miny, self.maxx, self.maxy = self.perimeter.bounds
 		self.num_boids = num_boids
 		self.flock = Flock(num_boids, perimeter)
+		self.static_obstacles = self.set_static_obstacles()
+		self.dynamic_obstacles = []
 
 	def update(self):
-		self.flock.update()
+		self.flock.update(self.static_obstacles + self.dynamic_obstacles)
 
+	def set_dynamic_obstacles(self, polygon_perimeters):
+		self.dynamic_obstacles = [Obstacle(p) for p in polygon_perimeters]
 
+	def set_static_obstacles(self):
+		corners = [[self.minx, self.miny], [self.minx, self.maxy], [self.maxx, self.maxy], [self.maxx, self.miny]]
+		return [obstacle_from_point(c) for c in corners]
 
 
 if __name__ == '__main__':

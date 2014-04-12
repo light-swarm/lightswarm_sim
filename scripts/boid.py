@@ -2,8 +2,8 @@ import math
 import random
 import numpy as np
 
-SEP_RATE = 0.4
-ALIGN_RATE = 0.15
+SEP_RATE = 0.5
+ALIGN_RATE = 0.3
 SHEEP_RATE = 0.3
 SPEED = 2.0  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
@@ -38,21 +38,18 @@ class Boid(object):
 
     def update(self, neighbors, obstacles):
         self.last_neighbors = neighbors
-        self.update_velocities(neighbors)
+        self.update_velocity_boid_rules(neighbors)
         self.update_velocity_obstacles(obstacles)
         self.pos += self.vel
         self.respect_perimeter()
 
     def update_velocity_obstacles(self, obstacles):
-        obstacles_vectors =[o - self.pos for o in obstacles]
-        obstalces_distance = [np.linalg.norm(v) for v in obstacles_vectors]
-        obstalces_repulsion = [_normalized(v) * _repulsion_factor(d, 40) for (v,d) in zip(obstacles_vectors, obstalces_distance)]
-        obstalces_repulsion_total = np.sum(obstalces_repulsion, axis=0)
-
-        self.vel += _normalized(obstalces_repulsion_total) # no normalization after...
+        for obstacle in obstacles:
+            repulsion_vel = obstacle.get_repulsive_vel(self.get_xy())
+            self.vel += repulsion_vel # no normalization after. speed can increase by 1
 
 
-    def update_velocities(self, neighbors):
+    def update_velocity_boid_rules(self, neighbors):
         n_neighbors = len(neighbors)
         if n_neighbors == 0:
             return

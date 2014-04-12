@@ -34,9 +34,15 @@ class RosBoidWorld(GraphicalWorld):
 
 
 
-
     def obstacles_callback(self, obstacles):
-        pass
+        perimeter_polygons = []
+        for polygon in obstacles.polygons:
+            polygon_coords = []
+            for point in polygon.points:
+                polygon_coords.append([point.x, point.y])
+            perimeter_polygons.append(polygon_coords)
+        self.set_dynamic_obstacles(perimeter_polygons)
+
 
     def to_msg(self):
         world = World()
