@@ -46,11 +46,11 @@ class Obstacle(object):
 		return repulsion * repulsion_scale
 
 
-def obstacle_from_point(xy):
+def obstacle_from_point(xy, buffer_size=30):
 	x, y = xy
 	d = 5
 	perimeter = [[x-d, y-d], [x+d, y-d], [x+d, y+d], [x-d,y+d]]
-	return Obstacle(perimeter)
+	return Obstacle(perimeter, buffer_size)
 
 if __name__ == '__main__':
 	o = Obstacle(((0,0), (10,0), (10,10), (0,10)))
