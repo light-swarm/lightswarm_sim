@@ -2,9 +2,9 @@ import math
 import random
 import numpy as np
 
-SEP_RATE = 0.5
-ALIGN_RATE = 0.3
-SHEEP_RATE = 0.3
+SEP_RATE = 0.3
+ALIGN_RATE = 0.15
+SHEEP_RATE = 0.15
 SPEED = 1.0  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
 FAKE_MINZ = -20.0
