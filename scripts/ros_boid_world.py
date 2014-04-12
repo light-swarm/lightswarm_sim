@@ -63,9 +63,16 @@ class RosBoidWorld(GraphicalWorld):
             obstacle_boid.location.x = x
             obstacle_boid.location.y = y
             obstacle_boid.theta = 0
-            obstacle_boid.color = [255, 0, 0]
+            obstacle_boid.color = [0, 0, 255]
             world.boids.append(obstacle_boid)
 
+        # the main boid
+        anchor_boid = Boid()
+        anchor_boid.location.x = 70
+        anchor_boid.location.y = 30
+        anchor_boid.theta = 0
+        anchor_boid.color = [0, 255, 0]
+        world.boids.append(anchor_boid)
         return world
 
     def run(self):
