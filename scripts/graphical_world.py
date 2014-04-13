@@ -1,5 +1,5 @@
 from world import World
-from time import sleep
+import time
 from shapely.geometry import Polygon
 import pygame
 
@@ -15,6 +15,9 @@ class GraphicalWorld(World):
 
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		self.background.fill((20, 20, 20))
+		self._start_time = time.time()
+		self._update_count = 0
+		self._display_font = pygame.font.SysFont('monospace', 15)
 
 	def world_to_pixel(self, x, y):
 		x = self.window_width * (x - self.minx) / (self.maxx - self.minx)
@@ -43,7 +46,7 @@ class GraphicalWorld(World):
 		x,y = self.world_to_pixel(*boid.get_xy())
 		for n in boid.last_neighbors:
 			(nx, ny) = self.world_to_pixel(*n.get_xy())
-			pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))		
+			pygame.draw.line(self.screen, (40, 40, 40), (x,y), (nx, ny))		
 
 	def render_boid(self, boid):
 		x,y = self.world_to_pixel(*boid.get_xy())
@@ -52,11 +55,19 @@ class GraphicalWorld(World):
 		pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)
 		boid.last_neighbors = None  ### awful hack
 
+	def render_status(self):
+		elapsed_time = time.time() - self._start_time
+		update_hz = float(self._update_count) / elapsed_time
+		update_label = self._display_font.render('%.2f'%update_hz, 1, (255, 255, 0))
+		self.screen.blit(update_label, (10, 10))
+
 	def update(self):
 		super(GraphicalWorld, self).update()
 		self.screen.blit(self.background, (0,0))
 		self.render_world()
+		self.render_status()
 		pygame.display.flip()
+		self._update_count += 1
 
 
 	def run(self):
@@ -70,7 +81,7 @@ if __name__ == '__main__':
 
 
 	square_perimeter = Polygon([[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]])
-	world = GraphicalWorld(square_perimeter, 400, 400)
+	world = GraphicalWorld(square_perimeter, 500, 500)
 	world.run()
 
 
