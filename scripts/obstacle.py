@@ -9,13 +9,15 @@ def _normalized(v):
 
 class Obstacle(object):
 	def __init__(self, exterior_points, buffer_size=30):
+		""" exterior points = list of [x,y]
+		"""
 		self.polygon = Polygon(exterior_points)
 		self.buffer_size = buffer_size
 		self.dilated_polygon = self.polygon.buffer(buffer_size)
 
 	def get_center_xy(self):
 		return self.polygon.centroid.x, self.polygon.centroid.y
-		
+
 	def get_coordinates(self):
 		return self.polygon.exterior.coords
 
@@ -23,6 +25,13 @@ class Obstacle(object):
 		return self.dilated_polygon.exterior.coords
 
 	def get_repulsive_vel(self, xy):
+		""" 
+		xy = [x, y]
+		
+		return repulsion vector pointing away from the centroid
+		of the obstacle. vector is scaled from 0 to 1 for strength of
+		repulsion.
+		"""
 		point = Point(xy)
 		if not self.dilated_polygon.contains(point):
 			return np.asarray([0.0,0.0])
@@ -31,6 +40,19 @@ class Obstacle(object):
 		repulsion = _normalized(vector_from_center)
 
 		# okay, now how much?
+		#
+		#                \              .            x - point
+		#                 |              .           o - center
+		#   o ------------|------> x ====.           = - distance from force_field
+		#                 |              .        ---> - line from center
+        #                /              .         ---| - line to boundary
+        #             boundary       force_field
+        #
+        #  we want repulsion to be proportional to distance from force_field
+        #  0 < repulsion < 1
+        #  0 at force_filed
+        #  1 at boundary or closer to the center
+        #
 
 		line_from_center = LineString(((point.x, point.y), (self.polygon.centroid.x, self.polygon.centroid.y)))
 		line_to_boundary = self.polygon.intersection(line_from_center)
