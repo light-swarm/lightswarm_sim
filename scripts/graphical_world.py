@@ -23,6 +23,8 @@ class GraphicalWorld(World):
 
 	def render_world(self):
 		for boid in self.flock.boids:
+			self.render_boid_neighborhood(boid)
+		for boid in self.flock.boids:
 			self.render_boid(boid)
 		for obstacle in self.dynamic_obstacles:
 			self.render_obstacle(obstacle, (255, 0, 0))
@@ -37,14 +39,17 @@ class GraphicalWorld(World):
 		pygame.draw.polygon(self.screen, color, dilation_boundary, 1)
 
 
-
-	def render_boid(self, boid):
+	def render_boid_neighborhood(self, boid):
 		x,y = self.world_to_pixel(*boid.get_xy())
 		for n in boid.last_neighbors:
 			(nx, ny) = self.world_to_pixel(*n.get_xy())
-			#pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))
-		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 3)
+			pygame.draw.line(self.screen, (60, 60, 60), (x,y), (nx, ny))		
 
+	def render_boid(self, boid):
+		x,y = self.world_to_pixel(*boid.get_xy())
+		line_x, line_y = self.world_to_pixel(*boid.get_past_xy())
+		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 4)
+		pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)
 		boid.last_neighbors = None  ### awful hack
 
 	def update(self):
@@ -57,7 +62,8 @@ class GraphicalWorld(World):
 	def run(self):
 		for i in range(2000):
 			self.update()
-			self.set_dynamic_obstacles([[[0,0], [10,0], [10,10]]])
+			offset = i % self.maxx
+			self.set_dynamic_obstacles([[[0 + offset,0], [10 + offset,0], [10 + offset,10]]])
 			#sleep(0.03)
 
 if __name__ == '__main__':

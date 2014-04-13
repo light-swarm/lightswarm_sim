@@ -33,6 +33,10 @@ class Boid(object):
     def get_xy(self):
         return self.pos[0], self.pos[1]
 
+    def get_past_xy(self):
+        self.estimated_old_pos =  (self.pos - 5*(self.vel))
+        return self.estimated_old_pos[0], self.estimated_old_pos[1]
+
     def get_theta(self):
         return 180 * math.atan2(self.vel[1], self.vel[0]) / math.pi
 
