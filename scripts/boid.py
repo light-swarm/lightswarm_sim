@@ -17,14 +17,19 @@ def _repulsion_factor(distance, effect_horizon):
     # not a great function. net repulsion goes
     # down as the distance gets closer
     if distance < effect_horizon:
-        repulse = -1 * (effect_horizon - distance) * 0.1
+        repulse = (effect_horizon - distance) / effect_horizon
+        repulse = repulse**4
+
+        repulse = repulse * -0.3
+
         return repulse
     return 0
 
 class Boid(object):
     def __init__(self, x, y, perimeter):
         self.pos = np.asarray([float(x),float(y)])
-        self.vel = np.asarray([random.random() - 0.5 for i in self.pos])
+        self._default_random_vel = np.asarray([random.random() - 0.5 for i in self.pos])
+        self.vel = self._default_random_vel.copy()
 
         self.perimeter = perimeter
         self.last_neighbors = []
@@ -75,6 +80,8 @@ class Boid(object):
         ### BOID RULE3: don't get too close to other boids
         neighbors_vectors = [neigh_pos - self.pos for neigh_pos in neighbors_pos]
         neighbors_distance = [np.linalg.norm(v) for v in neighbors_vectors]
+        #neighbors_vectors[neighbors_distance == 0.0] = self._default_random_vel
+
         neighbors_repulsion = [ _normalized(v)*_repulsion_factor(d, 20) for (v,d) in zip(neighbors_vectors, neighbors_distance)]
         neighbors_repulsion_total = np.sum(neighbors_repulsion, axis=0)
 

@@ -25,8 +25,8 @@ class GraphicalWorld(World):
 		return int(x), int(y)
 
 	def render_world(self):
-		for boid in self.flock.boids:
-			self.render_boid_neighborhood(boid)
+		#for boid in self.flock.boids:
+		#	self.render_boid_neighborhood(boid)
 		for boid in self.flock.boids:
 			self.render_boid(boid)
 		for obstacle in self.dynamic_obstacles:

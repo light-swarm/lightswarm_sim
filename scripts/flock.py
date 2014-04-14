@@ -37,7 +37,7 @@ class Flock(object):
 			distanced_boids.sort()
 			boids = [b for (distance, b) in distanced_boids[:K_NEAREST]]
 
-		return boids[:5]
+		return boids
 
 	def update(self, obstacles):
 		cloned_boids = copy.deepcopy(self.boids)
