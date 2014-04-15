@@ -3,9 +3,7 @@ import copy # for deep copying boids
 import random
 import numpy as np
 
-DISTANCE_BASED_NEIGHBORHOOD = True
-K_NEAREST = 3
-DISTANCE = 30
+DISTANCE_THRESHOLD = 30
 
 class Flock(object):
 
@@ -27,24 +25,31 @@ class Flock(object):
 		y = random.randrange(miny, maxy)
 		return x,y
 
-	def boids_in_neighborhood(self, boids, target_boid):
-		t = target_boid
+	def boids_in_neighborhood(self, boids, target, use_distance=True, distance_threshold=DISTANCE_THRESHOLD, k_nearest=0):
+		t = target # must have instance variable pos. ugh
 		distanced_boids = [(np.linalg.norm(b.pos - t.pos),  b) for b in boids if b != t]
 
-		if DISTANCE_BASED_NEIGHBORHOOD:
-			boids = [b for (distance, b) in distanced_boids if distance < DISTANCE]
+		if use_distance:
+			boids = [b for (distance, b) in distanced_boids if distance < distance_threshold]
 		else:
 			distanced_boids.sort()
-			boids = [b for (distance, b) in distanced_boids[:K_NEAREST]]
+			boids = [b for (distance, b) in distanced_boids[:k_nearest]]
 
 		return boids
 
-	def update(self, obstacles):
+	def update(self, obstacles, goals):
+		for boid in self.boids:
+			boid.last_neighbors = None # hack to prevent recursion in deep copy below
+
 		cloned_boids = copy.deepcopy(self.boids)
+
+		for goal in goals:
+			goal.set_neighborhood(self.boids_in_neighborhood(cloned_boids, goal, use_distance=False, k_nearest=7))
+
 
 		for boid in self.boids:
 			neighbor_boids = self.boids_in_neighborhood(cloned_boids, boid)
-			boid.update(neighbor_boids, obstacles)
+			boid.update(neighbor_boids, obstacles, goals)
 
 
 

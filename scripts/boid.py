@@ -8,6 +8,7 @@ SHEEP_RATE = 0.15
 SPEED = 1.0  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
 FAKE_MINZ = -20.0
+GOAL_RATE = 0.15
 
 def _normalized(v):
     norm = np.linalg.norm(v)
@@ -28,12 +29,12 @@ def _repulsion_factor(distance, effect_horizon):
 class Boid(object):
     def __init__(self, x, y, perimeter):
         self.pos = np.asarray([float(x),float(y)])
-
+        self.id = random.randint(0, 1000)
         self._trail = [self.pos]
         self.vel = np.asarray([random.random() - 0.5 for i in self.pos])
 
         self.perimeter = perimeter
-        self.last_neighbors = []
+        self.last_neighbors = None
 
 
     def get_xy(self):
@@ -47,9 +48,10 @@ class Boid(object):
         delta_pos = self.pos - self.trail[-1]
         return 180 * math.atan2(delta_pos[1], delta_pos[0]) / math.pi
 
-    def update(self, neighbors, obstacles):
+    def update(self, neighbors, obstacles, goals):
         self.last_neighbors = neighbors
         self.update_velocity_boid_rules(neighbors)
+        self.update_velocity_goal(goals)
         self.update_velocity_obstacles(obstacles)
         self.pos += self.vel
 
@@ -58,6 +60,15 @@ class Boid(object):
             self._trail.pop()
 
         self.respect_perimeter()
+
+    def update_velocity_goal(self, goals):
+        if len(goals) == 0:
+            return
+        goal_vel = np.asarray([0.0, 0.0])
+        for goal in goals:
+            goal_vel += goal.get_attraction_vel(self)
+        self.vel += GOAL_RATE * goal_vel
+        self.vel = _normalized(self.vel)
 
     def update_velocity_obstacles(self, obstacles):
         for obstacle in obstacles:
