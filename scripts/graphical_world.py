@@ -25,8 +25,8 @@ class GraphicalWorld(World):
 		return int(x), int(y)
 
 	def render_world(self):
-		#for boid in self.flock.boids:
-		#	self.render_boid_neighborhood(boid)
+		for boid in self.flock.boids:
+			self.render_boid_neighborhood(boid)
 		for boid in self.flock.boids:
 			self.render_boid(boid)
 		for obstacle in self.dynamic_obstacles:
@@ -51,8 +51,9 @@ class GraphicalWorld(World):
 	def render_boid(self, boid):
 		x,y = self.world_to_pixel(*boid.get_xy())
 		line_x, line_y = self.world_to_pixel(*boid.get_past_xy())
+		pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)		
 		pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 4)
-		pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)
+
 		boid.last_neighbors = None  ### awful hack
 
 	def render_status(self):
@@ -71,6 +72,7 @@ class GraphicalWorld(World):
 
 
 	def run(self):
+		offset = 0
 		for i in range(2000):
 			self.update()
 			offset = i % self.maxx

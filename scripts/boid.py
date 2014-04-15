@@ -18,7 +18,7 @@ def _repulsion_factor(distance, effect_horizon):
     # down as the distance gets closer
     if distance < effect_horizon:
         repulse = (effect_horizon - distance) / effect_horizon
-        repulse = repulse**4
+        repulse = repulse**6
 
         repulse = repulse * -0.3
 
@@ -28,8 +28,9 @@ def _repulsion_factor(distance, effect_horizon):
 class Boid(object):
     def __init__(self, x, y, perimeter):
         self.pos = np.asarray([float(x),float(y)])
-        self._default_random_vel = np.asarray([random.random() - 0.5 for i in self.pos])
-        self.vel = self._default_random_vel.copy()
+
+        self._trail = [self.pos]
+        self.vel = np.asarray([random.random() - 0.5 for i in self.pos])
 
         self.perimeter = perimeter
         self.last_neighbors = []
@@ -39,17 +40,23 @@ class Boid(object):
         return self.pos[0], self.pos[1]
 
     def get_past_xy(self):
-        self.estimated_old_pos =  (self.pos - 5*(self.vel))
-        return self.estimated_old_pos[0], self.estimated_old_pos[1]
+        old_pos = self._trail[-1]
+        return old_pos[0], old_pos[1]
 
     def get_theta(self):
-        return 180 * math.atan2(self.vel[1], self.vel[0]) / math.pi
+        delta_pos = self.pos - self.trail[-1]
+        return 180 * math.atan2(delta_pos[1], delta_pos[0]) / math.pi
 
     def update(self, neighbors, obstacles):
         self.last_neighbors = neighbors
         self.update_velocity_boid_rules(neighbors)
         self.update_velocity_obstacles(obstacles)
         self.pos += self.vel
+
+        self._trail.insert(0, self.pos.copy())
+        if len(self._trail) > 7:
+            self._trail.pop()
+
         self.respect_perimeter()
 
     def update_velocity_obstacles(self, obstacles):
