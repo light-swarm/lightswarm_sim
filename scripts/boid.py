@@ -45,7 +45,7 @@ class Boid(object):
         return old_pos[0], old_pos[1]
 
     def get_theta(self):
-        delta_pos = self.pos - self.trail[-1]
+        delta_pos = self.pos - self._trail[-1]
         return 180 * math.atan2(delta_pos[1], delta_pos[0]) / math.pi
 
     def update(self, neighbors, obstacles, goals):
