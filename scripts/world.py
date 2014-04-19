@@ -3,6 +3,7 @@ from shapely.geometry import Polygon
 import numpy as np
 from obstacle import Obstacle, obstacle_from_point
 from goal import Goal
+from perimeter import Perimeter
 
 class World(object):
 	""" 
@@ -11,11 +12,11 @@ class World(object):
 	messages.
 
 	"""
-	def __init__(self, perimeter, num_boids=40):
-		self.perimeter = perimeter
-		self.minx, self.miny, self.maxx, self.maxy = self.perimeter.bounds
+	def __init__(self, perimeter_points, num_boids=40):
+		self.perimeter = Perimeter(perimeter_points)
+		self.minx, self.miny, self.maxx, self.maxy = self.perimeter.get_bounds()
 		self.num_boids = num_boids
-		self.flock = Flock(num_boids, perimeter)
+		self.flock = Flock(num_boids, self.perimeter)
 		self.static_obstacles = []
 		self.dynamic_obstacles = []
 		self.goals = []
@@ -35,7 +36,7 @@ class World(object):
 		self.goals = [Goal(*xy) for xy in xys]
 
 if __name__ == '__main__':
-	square_perimeter = Polygon([[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]])
+	square_perimeter = [[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]]
 	world = World(square_perimeter)
 	world.update()
 

@@ -28,7 +28,7 @@ class RosBoidWorld(GraphicalWorld):
         height = self.config_map.get('sim_window_height')
 
 
-        super(RosBoidWorld, self).__init__(Polygon(perimeter), width, height)
+        super(RosBoidWorld, self).__init__(perimeter, width, height)
         self.sub = rospy.Subscriber('/obstacles', Obstacles, self.obstacles_callback)
         self.pub = rospy.Publisher('/world', World)
 
@@ -67,12 +67,23 @@ class RosBoidWorld(GraphicalWorld):
             world.boids.append(obstacle_boid)
 
         # the main boid
-        anchor_boid = Boid()
-        anchor_boid.location.x = 70
-        anchor_boid.location.y = 30
-        anchor_boid.theta = 0
-        anchor_boid.color = [0, 255, 0]
-        world.boids.append(anchor_boid)
+        for anchor in self.calibration_points:
+            anchor_boid = Boid()
+            anchor_boid.location.x = anchor[0]
+            anchor_boid.location.y = anchor[1]
+            anchor_boid.theta = 0
+            anchor_boid.color = [0, 255, 0]
+            world.boids.append(anchor_boid)
+
+        for goal in self.goals:
+            x, y = goal.get_xy()
+            goal_boid = Boid()
+            goal_boid.location.x = x
+            goal_boid.location.y = y
+            goal_boid.theta = 0
+            goal_boid.color = [255, 0, 0]
+            world.boids.append(goal_boid)            
+            
         return world
 
     def run(self):

@@ -20,6 +20,7 @@ class GraphicalWorld(World):
         self._display_font = pygame.font.SysFont('monospace', 15)
 
         self._show_connections = False
+        self.calibration_points = ((70, 30), (70, 35), (80, 35))
 
     def world_to_pixel(self, x, y):
         x = self.window_width * (x - self.minx) / (self.maxx - self.minx)
@@ -32,6 +33,8 @@ class GraphicalWorld(World):
         return wx, wy
 
     def render_world(self):
+        self.render_perimeter()  
+        self.render_calibration_points()      
         if self._show_connections:
             for boid in self.flock.boids:
                 self.render_boid_neighborhood(boid)
@@ -44,6 +47,18 @@ class GraphicalWorld(World):
         for boid in self.flock.boids:
             self.render_boid(boid)
 
+
+    def render_calibration_points(self):
+        for anchor in self.calibration_points:
+            px, py = self.world_to_pixel(*anchor)
+            pygame.draw.circle(self.screen, (0, 255, 0), (px, py), 2)
+
+
+    def render_perimeter(self):
+        boundary = [self.world_to_pixel(*c) for c in self.perimeter.get_perimeter_coordinates()]
+        field = [self.world_to_pixel(*c) for c in self.perimeter.get_field_coordinates()]        
+        pygame.draw.polygon(self.screen, (255, 120, 120), boundary, 3)
+        pygame.draw.polygon(self.screen, (255, 120, 120), field, 1)        
 
     def render_goal(self, goal):
         goal_x, goal_y = self.world_to_pixel(*goal.get_xy())
@@ -124,10 +139,10 @@ class GraphicalWorld(World):
             #sleep(0.03)
 
 if __name__ == '__main__':
+    trapezoidal_world = [[-100, -100], [100, -100], [70, 120], [-70,120]]
 
-
-    square_perimeter = Polygon([[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]])
-    world = GraphicalWorld(square_perimeter, 500, 500)
+    square_perimeter = [[-100.0, -100.0], [-100.0, 100.0], [100.0, 100.0], [100.0, -100.0]]
+    world = GraphicalWorld(trapezoidal_world, 500, 500)
     world.run()
 
 

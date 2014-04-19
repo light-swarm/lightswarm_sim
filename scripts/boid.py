@@ -21,7 +21,7 @@ def _repulsion_factor(distance, effect_horizon):
         repulse = (effect_horizon - distance) / effect_horizon
         repulse = repulse**6
 
-        repulse = repulse * -0.3
+        repulse = repulse * -0.2
 
         return repulse
     return 0
@@ -53,6 +53,7 @@ class Boid(object):
         self.update_velocity_boid_rules(neighbors)
         self.update_velocity_goal(goals)
         self.update_velocity_obstacles(obstacles)
+        self.update_velocity_perimeter()
         self.pos += self.vel
 
         self._trail.insert(0, self.pos.copy())
@@ -60,6 +61,9 @@ class Boid(object):
             self._trail.pop()
 
         self.respect_perimeter()
+
+    def update_velocity_perimeter(self):
+        self.vel += self.perimeter.get_repulsive_vel(self.get_xy())
 
     def update_velocity_goal(self, goals):
         if len(goals) == 0:
@@ -73,7 +77,7 @@ class Boid(object):
     def update_velocity_obstacles(self, obstacles):
         for obstacle in obstacles:
             repulsion_vel = obstacle.get_repulsive_vel(self.get_xy())
-            self.vel += repulsion_vel # no normalization after. speed can increase by 1
+            self.vel += 3*repulsion_vel # no normalization after. speed can increase by 1
 
 
     def update_velocity_boid_rules(self, neighbors):
@@ -109,7 +113,7 @@ class Boid(object):
         self.vel = _normalized(self.vel) * SPEED
 
     def respect_perimeter(self):
-        (minx, miny, maxx, maxy) = self.perimeter.bounds
+        (minx, miny, maxx, maxy) = self.perimeter.get_bounds()
         if self.pos[0] < minx:
             self.pos[0] = minx
             self.vel[0] *= -1

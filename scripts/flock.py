@@ -20,7 +20,7 @@ class Flock(object):
 			self.boids.append(Boid(x,y, self.perimeter))
 
 	def get_random_boid_params(self):
-		(minx, miny, maxx, maxy) = self.perimeter.bounds
+		(minx, miny, maxx, maxy) = self.perimeter.get_bounds()
 		x = random.randrange(minx, maxx)
 		y = random.randrange(miny, maxy)
 		return x,y

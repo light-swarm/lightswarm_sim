@@ -27,7 +27,7 @@ class Obstacle(object):
 	def get_repulsive_vel(self, xy):
 		""" 
 		xy = [x, y]
-		
+
 		return repulsion vector pointing away from the centroid
 		of the obstacle. vector is scaled from 0 to 1 for strength of
 		repulsion.
@@ -67,7 +67,7 @@ class Obstacle(object):
 		# alright. now I have a distance_from_force_field that should be between 0 and buffer_size
 		# rescale to 0, 1.0
 		repulsion_scale = distance_from_force_field / self.buffer_size
-
+		repulsion_scale = repulsion_scale ** 2
 		return repulsion * repulsion_scale
 
 
