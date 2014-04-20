@@ -3,7 +3,7 @@ import copy # for deep copying boids
 import random
 import numpy as np
 
-DISTANCE_THRESHOLD = 30
+DISTANCE_THRESHOLD = 15
 
 class Flock(object):
 

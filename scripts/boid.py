@@ -9,6 +9,7 @@ SPEED = 1.0  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
 FAKE_MINZ = -20.0
 GOAL_RATE = 0.15
+SEPARATION_HORIZON = 10
 
 def _normalized(v):
     norm = np.linalg.norm(v)
@@ -104,7 +105,7 @@ class Boid(object):
         neighbors_distance = [np.linalg.norm(v) for v in neighbors_vectors]
         #neighbors_vectors[neighbors_distance == 0.0] = self._default_random_vel
 
-        neighbors_repulsion = [ _normalized(v)*_repulsion_factor(d, 20) for (v,d) in zip(neighbors_vectors, neighbors_distance)]
+        neighbors_repulsion = [ _normalized(v)*_repulsion_factor(d, SEPARATION_HORIZON) for (v,d) in zip(neighbors_vectors, neighbors_distance)]
         neighbors_repulsion_total = np.sum(neighbors_repulsion, axis=0)
 
         sepration_vel = _normalized(neighbors_repulsion_total)

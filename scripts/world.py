@@ -12,7 +12,7 @@ class World(object):
 	messages.
 
 	"""
-	def __init__(self, perimeter_points, num_boids=40):
+	def __init__(self, perimeter_points, num_boids=30):
 		self.perimeter = Perimeter(perimeter_points)
 		self.minx, self.miny, self.maxx, self.maxy = self.perimeter.get_bounds()
 		self.num_boids = num_boids
