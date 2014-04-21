@@ -44,6 +44,8 @@ class GraphicalWorld(World):
             self.render_obstacle(obstacle, (255, 120, 120))
         for goal in self.goals:
             self.render_goal(goal)
+        for agent in self.agents:
+            self.render_agent(agent)
         for boid in self.flock.boids:
             self.render_boid(boid)
 
@@ -52,6 +54,17 @@ class GraphicalWorld(World):
         for anchor in self.calibration_points:
             px, py = self.world_to_pixel(*anchor)
             pygame.draw.circle(self.screen, (0, 255, 0), (px, py), 2)
+
+    def render_agent(self, agent):
+        agent_x, agent_y = self.world_to_pixel(*agent.get_xy())
+
+        for pos in agent.trail[:30]:
+            pos_x, pos_y = self.world_to_pixel(pos[0], pos[1])
+            pygame.draw.circle(self.screen, (255, 190, 255), (pos_x, pos_y), 1)
+        pygame.draw.circle(self.screen, (255, 190, 255), (agent_x, agent_y), 5)
+        agent_label = self._display_font.render('%s'%agent.id, 1, (255, 190, 255))
+        self.screen.blit(agent_label, (agent_x + 5, agent_y + 5))
+
 
 
     def render_perimeter(self):

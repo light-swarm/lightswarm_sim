@@ -20,6 +20,7 @@ class World(object):
 		self.static_obstacles = []
 		self.dynamic_obstacles = []
 		self.goals = []
+		self.agents = []
 		self.set_static_obstacles()			
 
 	def update(self):

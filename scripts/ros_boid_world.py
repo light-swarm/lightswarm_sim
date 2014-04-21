@@ -8,10 +8,12 @@ from lightswarm_core.msg import Shadow
 from lightswarm_core.msg import Obstacles
 from lightswarm_core.msg import World
 from lightswarm_core.msg import Boid
+from lightswarm_core.msg import Agents
 
 from graphical_world import GraphicalWorld
 from shapely.geometry import Polygon
 
+from agent import Agent
 
 
 CONFIG_FILE = 'lightswarm_core/params/config.yaml'
@@ -30,6 +32,7 @@ class RosBoidWorld(GraphicalWorld):
 
         super(RosBoidWorld, self).__init__(perimeter, width, height)
         self.sub = rospy.Subscriber('/obstacles', Obstacles, self.obstacles_callback)
+        self.agents_sub = rospy.Subscriber('/agents', Agents, self.agents_callback)
         self.pub = rospy.Publisher('/world', World)
 
 
@@ -42,6 +45,22 @@ class RosBoidWorld(GraphicalWorld):
                 polygon_coords.append([point.x, point.y])
             perimeter_polygons.append(polygon_coords)
         self.set_dynamic_obstacles(perimeter_polygons)
+
+    def agents_callback(self, agents):
+        new_agent_list = []
+        # has to be a better mechanism to update
+        for agent in agents.agents:
+            new_agent = Agent(agent.location.x, agent.location.y, agent.id)
+            for old_agent in self.agents:
+                if new_agent.same_agent(old_agent):
+                    new_agent.acquire_history(old_agent)
+                    break
+            new_agent_list.append(new_agent)
+        self.agents = new_agent_list
+
+
+
+
 
 
     def to_msg(self):
@@ -83,7 +102,7 @@ class RosBoidWorld(GraphicalWorld):
             goal_boid.theta = 0
             goal_boid.color = [255, 0, 0]
             world.boids.append(goal_boid)            
-            
+
         return world
 
     def run(self):
