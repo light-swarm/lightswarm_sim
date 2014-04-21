@@ -48,14 +48,15 @@ class RosBoidWorld(GraphicalWorld):
 
     def agents_callback(self, agents):
         new_agent_list = []
-        # has to be a better mechanism to update
-        for agent in agents.agents:
-            new_agent = Agent(agent.location.x, agent.location.y, agent.id)
-            for old_agent in self.agents:
-                if new_agent.same_agent(old_agent):
-                    new_agent.acquire_history(old_agent)
-                    break
-            new_agent_list.append(new_agent)
+        existing_agent_map = {a.id : a for a in self.agents}
+        for agent_msg in agents.agents:
+            if agent_msg.id in existing_agent_map:
+                agent = existing_agent_map[agent_msg.id]
+                agent.update_from_msg(agent_msg.location.x, agent_msg.location.y)
+            else:
+                agent = Agent(agent_msg.location.x, agent_msg.location.y, agent_msg.id)
+            new_agent_list.append(agent)
+        # all agents not getting an update die... slowly... in the rain
         self.agents = new_agent_list
 
 

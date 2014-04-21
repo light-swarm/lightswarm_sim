@@ -37,7 +37,7 @@ class Flock(object):
 
 		return boids
 
-	def update(self, obstacles, goals):
+	def update(self, obstacles, goals, agents):
 		for boid in self.boids:
 			boid.last_neighbors = None # hack to prevent recursion in deep copy below
 
@@ -49,7 +49,7 @@ class Flock(object):
 
 		for boid in self.boids:
 			neighbor_boids = self.boids_in_neighborhood(cloned_boids, boid)
-			boid.update(neighbor_boids, obstacles, goals)
+			boid.update(neighbor_boids, obstacles, goals, agents)
 
 
 

@@ -9,7 +9,11 @@ SPEED = 1.0  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
 FAKE_MINZ = -20.0
 GOAL_RATE = 0.15
+AGENT_RATE = 0.3
 SEPARATION_HORIZON = 10
+
+MAX_AGENT_AFFINITY = 1.0
+AGENT_AFFINITY_THRESHOLD = 0.8
 
 def _normalized(v):
     norm = np.linalg.norm(v)
@@ -36,7 +40,7 @@ class Boid(object):
 
         self.perimeter = perimeter
         self.last_neighbors = None
-
+        self.agent_affinity_map = {}
 
     def get_xy(self):
         return self.pos[0], self.pos[1]
@@ -49,10 +53,11 @@ class Boid(object):
         delta_pos = self.pos - self._trail[-1]
         return 180 * math.atan2(delta_pos[1], delta_pos[0]) / math.pi
 
-    def update(self, neighbors, obstacles, goals):
+    def update(self, neighbors, obstacles, goals, agents):
         self.last_neighbors = neighbors
         self.update_velocity_boid_rules(neighbors)
-        self.update_velocity_goal(goals)
+        self.update_velocity_goals(goals)
+        self.update_velocity_agents(agents)
         self.update_velocity_obstacles(obstacles)
         self.update_velocity_perimeter()
         self.pos += self.vel
@@ -64,9 +69,19 @@ class Boid(object):
         self.respect_perimeter()
 
     def update_velocity_perimeter(self):
-        self.vel += self.perimeter.get_repulsive_vel(self.get_xy())
+        self.vel += self.perimeter.get_repulsive_vel(self.get_xy()) # no normalization
 
-    def update_velocity_goal(self, goals):
+    def update_velocity_agents(self, agents):
+        if len(agents) == 0:
+            return
+        agent_vel = np.asarray([0.0, 0.0])
+        for agent in agents:
+            agent_vel += agent.get_influence_vel(self)
+        self.vel += AGENT_RATE * agent_vel
+        self.vel = _normalized(self.vel)
+
+
+    def update_velocity_goals(self, goals):
         if len(goals) == 0:
             return
         goal_vel = np.asarray([0.0, 0.0])
@@ -138,7 +153,21 @@ class Boid(object):
                 self.vel[0] *= -1          
 
     
+    def like_me(self, agent_id, like_factor):
+        old_like_factor = self.agent_affinity_map.get(agent_id, 0)
+        new_like_factor = min(old_like_factor + like_factor, MAX_AGENT_AFFINITY)
+        new_like_factor = max(new_like_factor, 0.0)
+        self.agent_affinity_map[agent_id] = new_like_factor
 
+    def likes_me(self, agent_id):
+        try:
+            like_factor = self.agent_affinity_map[agent_id]
+            return like_factor > AGENT_AFFINITY_THRESHOLD
+        except KeyError:
+            return False
+
+    def likes_anyone(self):
+        return any(x > AGENT_AFFINITY_THRESHOLD for x in self.agent_affinity_map.values())
 
 
 

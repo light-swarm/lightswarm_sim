@@ -24,7 +24,9 @@ class World(object):
 		self.set_static_obstacles()			
 
 	def update(self):
-		self.flock.update(self.static_obstacles + self.dynamic_obstacles, self.goals)
+		for agent in self.agents:
+			agent.update()
+		self.flock.update(self.static_obstacles + self.dynamic_obstacles, self.goals, self.agents)
 
 	def set_dynamic_obstacles(self, polygon_perimeters):
 		self.dynamic_obstacles = [Obstacle(p) for p in polygon_perimeters]

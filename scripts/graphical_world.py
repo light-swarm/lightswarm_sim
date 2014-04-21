@@ -57,12 +57,15 @@ class GraphicalWorld(World):
 
     def render_agent(self, agent):
         agent_x, agent_y = self.world_to_pixel(*agent.get_xy())
+        color = (255, 190, 255)
+        if agent.has_been_stationary():
+            color = (190, 255, 80)
 
         for pos in agent.trail[:30]:
             pos_x, pos_y = self.world_to_pixel(pos[0], pos[1])
-            pygame.draw.circle(self.screen, (255, 190, 255), (pos_x, pos_y), 1)
-        pygame.draw.circle(self.screen, (255, 190, 255), (agent_x, agent_y), 5)
-        agent_label = self._display_font.render('%s'%agent.id, 1, (255, 190, 255))
+            pygame.draw.circle(self.screen, color, (pos_x, pos_y), 1)
+        pygame.draw.circle(self.screen, color, (agent_x, agent_y), 5)
+        agent_label = self._display_font.render('%s' % agent.id, 1, color)
         self.screen.blit(agent_label, (agent_x + 5, agent_y + 5))
 
 
@@ -100,6 +103,8 @@ class GraphicalWorld(World):
         line_x, line_y = self.world_to_pixel(*boid.get_past_xy())
         pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)       
         pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 4)
+        if boid.likes_anyone():
+            pygame.draw.circle(self.screen, (0, 0, 255), (x,y), 2) 
 
 
     def render_status(self):
