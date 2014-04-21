@@ -1,0 +1,13 @@
+<launch>
+	<param name="config_file" value="$(find lightswarm_core)/params/config.yaml" />
+
+	<include file="$(find openni_launch)/launch/openni.launch" />
+	<node name="blob_tracker" pkg="blob_detector" type="blob_tracker.py"/> -->
+	<node name="detector" pkg="lightswarm_sense" type="ls_blob_detector.py"/>
+
+	<node name="shadow_calculator" pkg="lightswarm_shadow" type="shadow_calculator.py"/>
+	<!-- <node name="simulator" pkg="lightswarm_sim" type="ros_boid_world.py"/> -->
+
+
+
+</launch>
