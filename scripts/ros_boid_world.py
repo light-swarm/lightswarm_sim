@@ -107,7 +107,7 @@ class RosBoidWorld(GraphicalWorld):
         return world
 
     def run(self):
-        r = rospy.Rate(30)
+        r = rospy.Rate(18)
 
         while not rospy.is_shutdown():
             self.update()
