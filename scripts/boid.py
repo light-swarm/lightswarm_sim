@@ -3,9 +3,9 @@ import random
 import numpy as np
 
 SEP_RATE = 0.3
-ALIGN_RATE = 0.15
+ALIGN_RATE = 0.20
 SHEEP_RATE = 0.15
-SPEED = 1.0  # x the refresh rate for speed in cms/sec
+SPEED = 1.5  # x the refresh rate for speed in cms/sec
 FAKE_MAXZ = 20.0
 FAKE_MINZ = -20.0
 GOAL_RATE = 0.15
@@ -78,7 +78,7 @@ class Boid(object):
         for agent in agents:
             agent_vel += agent.get_influence_vel(self)
         self.vel += AGENT_RATE * agent_vel
-        self.vel = _normalized(self.vel)
+        self.vel = SPEED * _normalized(self.vel)
 
 
     def update_velocity_goals(self, goals):
@@ -88,7 +88,7 @@ class Boid(object):
         for goal in goals:
             goal_vel += goal.get_attraction_vel(self)
         self.vel += GOAL_RATE * goal_vel
-        self.vel = _normalized(self.vel)
+        self.vel = SPEED * _normalized(self.vel)
 
     def update_velocity_obstacles(self, obstacles):
         for obstacle in obstacles:
