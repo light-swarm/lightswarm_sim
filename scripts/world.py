@@ -34,6 +34,10 @@ class World(object):
 	def set_static_obstacles(self):
 		corners = [[self.minx, self.miny], [self.minx, self.maxy], [self.maxx, self.maxy], [self.maxx, self.miny]]
 		self.static_obstacles =  [obstacle_from_point(c) for c in corners]
+	
+		world_barrier_points = [[-65, 190], [49, 170], [-65, 150]]
+		world_barrier = Obstacle(world_barrier_points)
+		self.static_obstacles.append(world_barrier)
 
 	def set_goals(self, xys):
 		self.goals = [Goal(*xy) for xy in xys]
