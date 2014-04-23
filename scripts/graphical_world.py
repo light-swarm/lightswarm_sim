@@ -20,8 +20,9 @@ class GraphicalWorld(World):
         self._display_font = pygame.font.SysFont('monospace', 15)
 
         self._show_connections = False
-        self.calibration_points = ((0, 0), (100, 0), (100, 100), (0, 100), (0, -60), (60, -60))
-
+        #self.calibration_points = ((0, 0), (100, 0), (100, 100), (0, 100), (0, -60), (60, -60))
+        self.calibration_points = []
+        
     def world_to_pixel(self, x, y):
         x = self.window_width * (x - self.minx) / (self.maxx - self.minx)
         y = self.window_height * (y - self.miny) / (self.maxy - self.miny)
