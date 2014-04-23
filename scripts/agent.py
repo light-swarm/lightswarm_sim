@@ -75,7 +75,7 @@ class Agent(object):
 
         if cosine_distance < 0.5 and self._speed > STATIONARY_ENOUGH_SPEED:
             boid.like_me(self.id, -0.5)
-        boid.like_me(self.id, 0.005)
+        boid.like_me(self.id, 0.01)
 
     def _is_boid_influenced(self, boid):
         if boid.id % 10 < 3:
