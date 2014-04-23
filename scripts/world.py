@@ -35,7 +35,7 @@ class World(object):
 		corners = [[self.minx, self.miny], [self.minx, self.maxy], [self.maxx, self.maxy], [self.maxx, self.miny]]
 		self.static_obstacles =  [obstacle_from_point(c) for c in corners]
 	
-		world_barrier_points = [[-65, 190], [49, 170], [-65, 150]]
+		world_barrier_points = [[-65, 190], [55, 190], [55, 210], [-65, 230]]
 		world_barrier = Obstacle(world_barrier_points)
 		self.static_obstacles.append(world_barrier)
 

@@ -3,6 +3,7 @@
 import math
 import rospy
 import yaml
+import colorsys
 
 from lightswarm_core.msg import Shadow
 from lightswarm_core.msg import Obstacles
@@ -17,6 +18,12 @@ from agent import Agent
 
 
 CONFIG_FILE = 'lightswarm_core/params/config.yaml'
+
+def rgb_by_id(idx):
+    id_low_bits = (((idx % 40) / 40.0) - 0.50) / 5.0
+    hue = 0.55 + id_low_bits
+    r,g,b = colorsys.hsv_to_rgb(hue, 0.6, 1.0)
+    return (int(r*255), int(g*255), int(b*255))
 
 class RosBoidWorld(GraphicalWorld):
 
@@ -73,7 +80,7 @@ class RosBoidWorld(GraphicalWorld):
             ros_boid.location.x = x
             ros_boid.location.y = y
             ros_boid.theta = boid.get_theta()
-            ros_boid.color = [255, 255, 255]
+            ros_boid.color = rgb_by_id(boid.id)
             if boid.liked_someone:
                 ros_boid.color = [100, 100, 255]
             boids.append(ros_boid)
