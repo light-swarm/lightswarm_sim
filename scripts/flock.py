@@ -40,6 +40,7 @@ class Flock(object):
 	def update(self, obstacles, goals, agents):
 		for boid in self.boids:
 			boid.last_neighbors = None # hack to prevent recursion in deep copy below
+			boid.liked_someone = False # ugh. but reseting each round
 
 		cloned_boids = copy.deepcopy(self.boids)
 

@@ -42,6 +42,8 @@ class Boid(object):
         self.last_neighbors = None
         self.agent_affinity_map = {}
 
+        self.liked_someone = False
+
     def get_xy(self):
         return self.pos[0], self.pos[1]
 
@@ -162,7 +164,9 @@ class Boid(object):
     def likes_me(self, agent_id):
         try:
             like_factor = self.agent_affinity_map[agent_id]
-            return like_factor > AGENT_AFFINITY_THRESHOLD
+            liked_agent = like_factor > AGENT_AFFINITY_THRESHOLD
+            self.liked_someone = liked_agent
+            return liked_agent
         except KeyError:
             return False
 

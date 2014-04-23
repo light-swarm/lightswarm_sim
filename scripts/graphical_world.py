@@ -103,7 +103,7 @@ class GraphicalWorld(World):
         line_x, line_y = self.world_to_pixel(*boid.get_past_xy())
         pygame.draw.line(self.screen, (255, 50, 100), (x,y), (line_x, line_y), 2)       
         pygame.draw.circle(self.screen, (255, 255, 255), (x,y), 4)
-        if boid.likes_anyone():
+        if boid.liked_someone:
             pygame.draw.circle(self.screen, (0, 0, 255), (x,y), 2) 
 
 
