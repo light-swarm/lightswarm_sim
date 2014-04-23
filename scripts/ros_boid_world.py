@@ -75,7 +75,7 @@ class RosBoidWorld(GraphicalWorld):
             ros_boid.theta = boid.get_theta()
             ros_boid.color = [255, 255, 255]
             if boid.liked_someone:
-                ros_boid.color = [255, 180, 180]
+                ros_boid.color = [100, 100, 255]
             boids.append(ros_boid)
         world.boids = boids
 
